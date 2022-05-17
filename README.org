@@ -33,15 +33,15 @@ see this link   https://forums.gentoo.org/viewtopic-p-8617575.html
 
 *other apps*
 
-These are my personal choices configured in this build
+These apps are configured in this build
 
 - pulsemixer
-- firefox
-- emacs
+- firefox (Super-Shift-w)
+- emacs (Super-e)
 - xbacklight
-- emacs-everywhere
-- st
-- fcitx (for Chinese input)
+- emacs-everywhere (Super-Shift-e)
+- st (Super-enter)
+- fcitx (for Chinese input) (Ctrl-Space)
 
 ** Patches
 - dwm-6.1-single_tagset.diff
