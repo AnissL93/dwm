@@ -41,6 +41,7 @@ These are my personal choices configured in this build
 - xbacklight
 - emacs-everywhere
 - st
+- fcitx (for Chinese input)
 
 ** Patches
 - dwm-6.1-single_tagset.diff
