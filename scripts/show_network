@@ -1,0 +1,65 @@
+#!/bin/bash
+
+
+get_traffic() {
+    local pad="$2       +"
+    # kb level
+    if [[ $1 -lt 1048576 ]]; then
+        local s=$(bc <<< "scale=2; $1/1024.0")
+        local p="${pad:0:$((${#pad} - ${#s}))}"
+        printf "%s Kib" "${p}${s}"
+        return
+    fi
+    if [[ $1 -lt 1024*1024*1024 ]]; then
+        local s=$(bc <<< "scale=2; $1/1024.0/1024.0")
+        local p=${pad:0:$((${#pad} - ${#s}))}
+        echo "${p}$s Mib"
+        return
+    fi
+
+    local s=$(bc <<< "scale=2; $1/1024.0/1024.0/1024.0")
+    local p=${pad:0:$((${#pad} - ${#s}))}
+    echo "${p}$s Gib"
+}
+
+get_proxy() {
+    [[ -z $(pstree | grep xray) ]] && echo "⛓" || echo "P"
+}
+
+main () {
+    local net_state="🚫"
+    local uploading=0
+    local downloading=0
+    local default_device=$(ip route | grep dev -m 1)
+
+    if [[ -z $default_device ]]; then
+       echo $net_state
+       return
+    fi
+
+    [ $(echo $default_device | grep -c "dev e") -ne 0 ] && net_state="🔃"
+    [ $(echo $default_device | grep -c "dev w") -ne 0 ] && net_state="📶"
+
+    local logfile="${XDG_CACHE_HOME:-$HOME/.cache}/netlog"
+
+    local prevdata="$(cat $logfile 2>/dev/null)"
+
+    local upload_byte="$(($(cat /sys/class/net/*/statistics/tx_bytes | paste -sd '+')))"
+    local download_byte="$(($(cat /sys/class/net/*/statistics/rx_bytes | paste -sd '+')))"
+
+    local prev_upload_byte=0
+    local prev_download_byte=0
+
+    uploading=$(bc <<< "$upload_byte - ${prevdata%% *}")
+    downloading=$(bc <<< "$download_byte - ${prevdata##* }")
+
+    echo "$upload_byte $download_byte" > "$logfile"
+
+    printf "%s %s ${net_state} $(get_proxy)" "$(get_traffic $uploading ⬆️)" "$(get_traffic $downloading ⬇️)"
+}
+
+case $BUTTON in
+	2) setsid st -e emacsclient -nc "~/.config/Scripts/show_network" ;;
+esac
+
+main

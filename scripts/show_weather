@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Displays todays precipication chance (☔) and daily low (🥶) and high (🌞).
+# Usually intended for the statusbar.
+
+# If we have internet, get a weather report from wttr.in and store it locally.
+# You could set up a shell alias to view the full file in a pager in the
+# terminal if desired. This function will only be run once a day when needed.
+weatherreport="${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport"
+weatherreport_brief="${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport_brief"
+
+getforecast() {
+    curl -sf "wttr.in/beijing" > "$weatherreport";
+    # curl -sf "wttr.in/beijing?format=3" > "$weatherreport_brief" || exit 1 ;
+    curl wttr.in/Beijing?format="%l:+%c+%t+%h+%m" > "$weatherreport_brief" || exit 1 ;
+}
+
+# Some very particular and terse stream manipulation. We get the maximum
+# precipitation chance and the daily high and low from the downloaded file and
+# display them with coresponding emojis.
+showweather() {
+    cat $weatherreport_brief
+}
+
+case $BUTTON in
+	1) setsid st -e less -Srf "$weatherreport" ;;
+	2) setsid st -e emacsclient -nc "~/.config/Scripts/show_weather" ;;
+	3) getforecast && showweather ;;
+esac
+
+# The test if our forcecast is updated to the day. If it isn't download a new
+# weather report from wttr.in with the above function.
+[ "$(stat -c %y "$weatherreport" 2>/dev/null | cut -d' ' -f1)" = "$(date '+%Y-%m-%d')" ] ||
+	getforecast
+
+showweather

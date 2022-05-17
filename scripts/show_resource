@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+case $BUTTON in
+    1) setsid st -e htop;;
+	2) setsid st -e emacsclient -nc "~/.config/Scripts/show_resource" ;;
+esac
+
+echo $(free -h | awk '/^Mem/ { print $3"/"$2 }' | sed s/i//g)

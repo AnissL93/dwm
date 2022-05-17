@@ -1,0 +1,25 @@
+#!/bin/bash
+
+main() {
+    source ~/.config/Scripts/color.sh
+    [[ $BUTTON = 2 ]] && setsid st -e e ~/.config/Scripts/battery
+
+    local full_charged="fully-charged"
+    local charging="charging"
+    local discharge="discharging"
+
+    local full_power_status=$(upower -i $(upower -e | grep BAT) | grep --color=never state)
+    local power_status=${full_power_status/state: /}
+
+    [ -f "/sys/class/power_supply/BAT0/capacity" ] && percentage=$(cat /sys/class/power_supply/BAT0/capacity) || exit
+
+    [ $power_status = $full_charged ] && printf "🔌 ${percentage}%s" %
+    [ $power_status = $charging ] && echo "⚡ $percentage%"
+
+    if [ $power_status = $discharge ]; then
+        [  $percentage -lt 15 ] && echo "🪫 $percentage%" && return
+        echo "🔋 $percentage%"
+    fi
+}
+
+main
