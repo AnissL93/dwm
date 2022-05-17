@@ -18,12 +18,12 @@ static const int showbar = 1; /* 0 means no bar */
 static const int topbar = 1;  /* 0 means bottom bar */
 // static double defaultopacity = 0.93;
 static const char *fonts[] = {
-    "Comic Code Ligatures:size=11", "LXGW WenKai:size=11",
+    "Liberation Mono:size=11",
     "Twitter Color Emoji:pixelsize=11", "Noto Color Emoji:pizelsize=11"};
 /* static const char *fonts[] = {"Liberation Mono:size=11", */
 /*                               "Twitter Color Emoji:pixelsize=11", */
 /*                               "Noto Color Emoji:pizelsize=11"}; */
-static const char dmenufont[] = "Comic Code Ligatures:size = 11";
+static const char dmenufont[] = "Liberation Mono:size = 11";
 
 static char normbgcolor[] = "#222222";
 static char normbordercolor[] = "#444444";
@@ -265,6 +265,7 @@ static Key keys[] = {
     // sticky
     {MODKEY | ShiftMask, XK_s, togglesticky, {0}},
 };
+
 
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
