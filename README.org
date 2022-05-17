@@ -1,0 +1,68 @@
+
+Customized desktop environment with suckless softwares, deployed on Gentoo.
+
+* DWM
+version: [[https://dwm.suckless.org/][dwm-6.3]]
+
+*Preview*
+
+[[./pics/screenshot.png]]
+
+** Requirements
+*System dependency*
+
+#+begin_example
+`--  media-libs/fontconfig-2.13.1-r2  (media-libs/fontconfig) amd64
+`--  x11-libs/libX11-1.7.3  (x11-libs/libX11) amd64
+`--  x11-libs/libXft-2.3.4  (x11-libs/libXft) amd64
+`--  x11-libs/libXinerama-1.1.4-r1  (x11-libs/libXinerama) amd64
+`--  x11-base/xorg-proto-2021.5  (x11-base/xorg-proto) amd64
+#+end_example
+
+*To Use emoji*
+
+By default, using emoji will break the system due to some error in libXft, need to patch and rebuild.
+
+see this link   https://forums.gentoo.org/viewtopic-p-8617575.html
+
+1. get this patch https://gitlab.freedesktop.org/xorg/lib/libxft/-/merge_requests/1.patch
+2. Put patch in */etc/portage/patches/x11-libs/libXft* (whatever version is used, if the folder not exists, create it) and rebuild libXft package
+3. install font
+   - noto-emoji (install with emerge)
+   - twemoji: https://github.com/eosrei/twemoji-color-font
+
+*other apps*
+
+These are my personal choices configured in this build
+
+- pulsemixer
+- firefox
+- emacs
+- xbacklight
+- emacs-everywhere
+- st
+
+** Patches
+- dwm-6.1-single_tagset.diff
+- dwm-actualfullscreen-20211013-cb3f58a.diff
+- dwm-alpha-20201019-61bb8b2.diff
+- dwm-sticky-6.1.diff
+- dwm-swallow-20201211-61bb8b2.diff
+- dwm-xresources-20210827-138b405.diff
+- dwm-vanitygaps-6.2.diff (tile, bstack, bstackhoriz, centeredmaster, centeredfloatingmaster, deck, fibonacci (dwindle, spiral), grid, nrowgrid)
+- dwm-statuscmd-status2d-20210405-60bb3df.diff
+- dwm-dwmc-6.2.diff
+
+* Dwmblocks
+Customized statusbar with dwmblocks
+
+*Showed Status*
+- weather
+- network
+- memory usage
+- input method (English/Chinese)
+- battery status
+- date
+
+*Preview*
+[[./pics/dwmblocks.png]]
