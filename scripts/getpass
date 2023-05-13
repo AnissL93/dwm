@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+l=""
+for i in $(ls ~/.password-store); do
+    a=${i%.gpg}
+    [ -z $l ] && l="$a" || l="$l\n$a"
+done
+
+sel_pass=$(echo -e $l | dmenu)
+pass -c $sel_pass && notify-send "Pass" "Copy $sel_pass to Clipboard. Will clear in 45 seconds"

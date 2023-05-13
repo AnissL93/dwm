@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+open_file() {
+    case "$(file --mime-type -b "$1")" in
+        image/*.djvu)
+            zathura "$1"
+            shift
+            ;;
+        image/*)
+            sxiv $(realpath $1)
+            shift
+            ;;
+	    inode/directory)
+            lf $(realpath $1)
+            shift
+            ;;
+	    application/pdf)
+            zathura $1
+            shift
+            ;;
+	    application/epub)
+            zathura $1
+            shift
+            ;;
+	    application/x-bittorrent)
+            unproxy
+            transmission-qt $1
+            shift
+            ;;
+        *) xdg-open "$1" ;;
+    esac
+}
+
+
+[ -z "$1" ] && exit 1
+[ -f "$1" ] || [ -d "$1" ] || exit 1
+open_file "$1"

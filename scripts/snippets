@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Return constant used snippetes, like emails, user names...
+
+snippets=("anissL93@protonmail.com" "anissL93")
+
+main() {
+    local str=""
+    for val in "${snippets[@]}"; do
+        str="$val\n$str"
+    done
+    value=$(echo -e $str | dmenu)
+    echo $value | xclip -sel clip
+}
+
+main

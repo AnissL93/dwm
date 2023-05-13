@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Switch Bluetooth
+
+
+action=$(echo -e "restart\n" | dmenu)
+
+case $action in
+    "restart")
+        rfkill block bluetooth
+        rfkill unblock bluetooth
+        sudo /etc/init.d/bluetooth restart
+        ;;
+    *) ;;
+esac

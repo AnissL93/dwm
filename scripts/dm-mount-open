@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+usbdrives=$(lsblk -rpo "name,type,size,mountpoint" | grep 'part\|rom' | grep "run")
+
+if [ -z "$usbdrives" ]; then
+    notify-send "Open Mount" "No mounting point is found"
+else
+    chosen=$(echo "$usbdrives" | dmenu -i -p "Which mount to open?")
+    chosen=$(echo $chosen | awk '{printf "%s",$4}')
+    setsid st -e lf $chosen
+fi
+
+# usbdrives=$(lsblk -rpo "name,type,size,mountpoint" | grep 'part\|rom' | awk '$4== /run/ {printf "%s (%s)\n",$1,$3}')

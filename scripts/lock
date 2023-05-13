@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+send_message() {
+    notify-send "Lock system" $@
+}
+
+main() {
+    local lock="lockscreen"
+    local power_off="poweroff"
+    local sleeping="suspend"
+    local reboot="reboot"
+    options="$lock\n$sleeping\n$power_off\n$reboot"
+    action=$(echo -e $options | dmenu)
+
+    case $action in
+        $power_off)
+	    sudo -A poweroff
+            ;;
+        $sleeping)
+	    sudo -A suspend
+            ;;
+        $lock)
+	    slock
+            ;;
+        $reboot)
+	    sudo -A reboot
+            ;;
+        *)
+    esac
+}
+
+main

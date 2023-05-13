@@ -1,0 +1,23 @@
+#!/bin/sh
+
+mountusb() {
+	chosen="$(echo "$usbdrives" | dmenu -i -p "Mount which drive?")" || exit 1
+	chosen="$(echo "$chosen" | awk '{print $1}')"
+	loc=$(udisksctl mount -b $chosen)
+	loc=${loc##*at}
+	echo $loc | xclip -sel clip
+	notify-send "💻 USB mounting" "$chosen mounted to $loc."
+	setsid st -e lf $loc
+}
+
+# anddrives=$(simple-mtpfs -l 2>/dev/null)
+usbdrives=$(lsblk -rpo "name,type,size,mountpoint" | grep 'part\|rom' | awk '$4==""{printf "%s (%s)\n",$1,$3}')
+
+echo "drivers ${usbdrives[@]}"
+
+if [ -z "$usbdrives" ]; then
+	notify-send "⚠️ No USB drive detected ⚠️"
+else
+	echo "USB drive(s) detected."
+	mountusb
+fi

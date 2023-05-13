@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+bgloc="$HOME/.local/share/bg"
+
+set_wallpaper() {
+    trueloc="$(readlink -f $1)" &&
+    case "$(file --mime-type -b "$trueloc")" in
+	    image/* )
+            ln -sf "$(readlink -f "$1")" "$bgloc" && xwallpaper --zoom $bgloc && notify-send "Changing wallpaper" "$trueloc" -t 2000
+            wal -i $bgloc --backend colorz
+            dwmc xrdb
+            ;;
+	    inode/directory)
+            true_pic="$(find "$trueloc" -iregex '.*.\(jpg\|jpeg\|png\|gif\)' -type f | shuf -n 1)"
+            ln -sf $true_pic "$bgloc" && xwallpaper --zoom "$bgloc" && notify-send "Random Wallpaper" "$true_pic" -t 2000
+            # also change xresource
+            wal -i $true_pic --backend colorz
+            dwmc xrdb
+            ;;
+	    *) notify-send "Error" "Not a valid image." -t 2000 ; exit 1;;
+    esac
+}
+
+[[ $# -eq 0 ]] && set_wallpaper ~/Documents/Pictures/wallpapers || set_wallpaper $1

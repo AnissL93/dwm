@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+url=$1
+split_url=${url//\// }
+
+array=()
+for i in ${split_url[@]}; do
+    array+=($i)
+done
+
+repo_name=${array[-1]}
+repo_path="~/Projects/${repo_name}"
+notify-send "⭐ Start clone repo ${url} to ${repo_path}"
+pushd "$HOME/Projects"
+git clone "${url}.git" ${repo_nam}
+popd
+notify-send "Clone finished ☀️"

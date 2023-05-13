@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+#this script helps to select monitor, change monitor mode (mirror or independent)
+
+get_aval_monitor_num() {
+    local mon_num=$(xrandr --listactivemonitors | grep "Monitors: ")
+    mon_num=${mon_num/Monitors: /}
+    echo $mon_num
+}
+
+
+mon_list=()
+get_monitors() {
+    echo "Get active monitors"
+   local all_mons=$(xrandr -q)
+   mon=$(xrandr | egrep -o "^[A-Za-z0-9\-]* connected")
+   for i in ${mon[@]}; do
+       [ $i = "connected" ] || mon_list=(${mon_list[@]} $i)
+   done
+   echo "find ${#mon_list[@]} monitors"
+}
+
+set_mirror() {
+    local left=""
+    for i in ${mon_list[@]}; do
+        if [ -z $left ]; then
+            # the first mon
+            xrandr --output $i --auto
+        else
+            xrandr --output $i --same-as $left --auto
+        fi
+        left=$i
+    done
+}
+
+set_indep_left_to_right_by_index() {
+    # set other mon to the right-of the previous one
+    local left=""
+    for i in ${mon_list[@]}; do
+        echo "set monitor ${i}"
+        if [ -z $left ]; then
+            # the first mon
+            xrandr --output $i --auto
+        else
+            xrandr --output $i --right-of $left --auto
+        fi
+        left=$i
+    done
+    local bgloc="$HOME/.local/share/bg"
+    xwallpaper --zoom "$bgloc"
+}
+
+sel_from_dmenu() {
+    if [ $1 > 1 ]; then
+        mode=$(echo -e "mirror\nindependent" | dmenu)
+        case $mode in
+            "mirror")
+                set_mirror
+                ;;
+            "independent")
+                set_indep_left_to_right_by_index
+                ;;
+        esac
+
+    else
+        notify-send "Monitor" "Single monitor does not need setting" -t 3000
+    fi
+}
+
+main() {
+    local monitor_num=$(get_aval_monitor_num)
+    get_monitors
+    if [ ${#@} = 0 ]; then
+        sel_from_dmenu $monitor_num
+    else
+        if [ ${#@} = 1 ]; then
+            [ $1 = "init" ] && set_indep_left_to_right_by_index && notify-send "Monitor" "Set monitor to independent mode" -t 3000
+        else
+            echo "wrong param"
+        fi
+    fi
+}
+
+main $@

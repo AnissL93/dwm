@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+send_message() {
+    echo $@ | dzen2 -p 10 -y 1060 -fg '#FFFFFF' -bg '#000000'
+}
+
+case $BUTTON in
+	1) send_message "CPU usage" "$(ps axch -o cmd,%cpu --sort=-%cpu | head)" ;;
+	3) st -e htop ;;
+esac

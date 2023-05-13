@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+f=$1
+
+if [ -f "$f" ]; then
+    font_path="$HOME/.local/share/fonts/"
+    echo "mv $f to $font_path"
+    mv $f $font_path
+
+    dir=${f%.*}
+    pushd $font_path
+    echo "extract font file to $(pwd)"
+    case $f in
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f -C $dir;;
+        *.tar.gz|*.tgz) tar xzvf $f -C $dir;;
+        *.tar.xz|*.txz) tar xJvf $f -C $dir;;
+        *.zip) unzip $f -d $dir;;
+        *.7z) 7z x $f -o $dir;;
+        *.rar) unrar x $f -o $dir;;
+    esac
+    popd
+
+    fc-cache
+else
+    echo "$f is an invalid file!"
+    exit -1
+fi
+

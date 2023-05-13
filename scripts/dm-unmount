@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+unmount_drive() {
+  mounted=$(lsblk -rpo "name,type,size,mountpoint" | grep 'part\|rom' | awk '$4 ~ /run/ {printf "%s (%s)\n",$1,$3}')
+  if [ -z "$mounted" ]; then
+    notify-send "⚠️ No MOUNTED USB drive detected ⚠️ "
+  else
+    chosen=$(echo "$mounted" | dmenu -i -p "Unmount which driver?") || exit 1
+    chosen="$(echo "$chosen" | awk '{print $1}')"
+    udisksctl unmount -f -b $chosen && notify-send "Unmount USB $chosen"
+  fi
+}
+
+unmount_drive

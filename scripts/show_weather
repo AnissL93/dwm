@@ -10,9 +10,9 @@ weatherreport="${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport"
 weatherreport_brief="${XDG_DATA_HOME:-$HOME/.local/share}/weatherreport_brief"
 
 getforecast() {
-    curl -sf "wttr.in/beijing" > "$weatherreport";
+    curl -sf "wttr.in/Singapore" > "$weatherreport";
     # curl -sf "wttr.in/beijing?format=3" > "$weatherreport_brief" || exit 1 ;
-    curl wttr.in/Beijing?format="%l:+%c+%t+%h+%m" > "$weatherreport_brief" || exit 1 ;
+    curl wttr.in/Singapore?format="%l:+%c+%t+%h+%m" > "$weatherreport_brief" || exit 1 ;
 }
 
 # Some very particular and terse stream manipulation. We get the maximum

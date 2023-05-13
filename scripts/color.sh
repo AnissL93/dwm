@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#Black        0;30     Dark Gray     1;30
+Color_Red='\033[0;31m'
+Color_Green='\033[0;32m'
+Color_Brown_Orange='\033[0;33m'
+Color_Blue='\033[0;34m'
+Color_Purple='\033[0;35m'
+Color_Cyan='\033[0;36m'
+Color_Light_Gray='\033[0;37m'
+Color_Light_Red='\033[1;31m'
+Color_Light_Green='\033[1;32m'
+Color_Yellow='\033[1;33m'
+Color_Light_Blue='\033[1;34m'
+Color_Light_Purple='\033[1;35m'
+Color_Light_Cyan='\033[1;36m'
+Color_White='\033[1;37m'
