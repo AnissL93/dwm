@@ -1,0 +1,11 @@
+--- dmenu.c	2021-04-16 06:30:47.715924755 +0300
++++ dmenu.c	2021-04-16 06:30:59.668925245 +0300
+@@ -411,7 +427,7 @@ keypress(XKeyEvent *ev)
+ 
+ 	switch(ksym) {
+ 	default:
+-insert:
++	insert:
+ 		if (!iscntrl(*buf))
+ 			insert(buf, len);
+ 		break;
