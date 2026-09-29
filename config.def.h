@@ -17,19 +17,21 @@ static const int swallowfloating =
 static const int showbar = 1; /* 0 means no bar */
 static const int topbar = 1;  /* 0 means bottom bar */
 // static double defaultopacity = 0.93;
-static const char *fonts[] = {"Liberation Mono:size=11",
-                              "Twitter Color Emoji:pixelsize=11",
-                              "Noto Color Emoji:pizelsize=11"};
-static const char dmenufont[] = "Liberation Mono:size = 11";
+static const char *fonts[] = {"PxPlus IBM VGA 8x16:pixelsize=24",
+                              "Cubic 11:pixelsize=24",
+                              "typicons:pixelsize=22",  /* status bar icons */
+                              "Noto Color Emoji:pixelsize=20"};
+static const char dmenufont[] = "PxPlus IBM VGA 8x16:pixelsize=24";
 
-static char normbgcolor[] = "#222222";
-static char normbordercolor[] = "#444444";
-static char normfgcolor[] = "#bbbbbb";
-static char selfgcolor[] = "#eeeeee";
-static char selbordercolor[] = "#005577";
-static char selbgcolor[] = "#005577";
+/* fallback colours (amber); normally overridden by the theme via X resources */
+static char normbgcolor[] = "#140c00";
+static char normbordercolor[] = "#664200";
+static char normfgcolor[] = "#ffb000";
+static char selfgcolor[] = "#140c00";
+static char selbordercolor[] = "#ffb000";
+static char selbgcolor[] = "#ffb000";
 
-#define baralpha 0xd0
+#define baralpha OPAQUE
 #define borderalpha OPAQUE
 
 static char *colors[][3] = {
@@ -68,8 +70,7 @@ static const Rule rules[] = {
     //{ "Gimp",     NULL,       NULL,       0,            0,           1, -1 },
     {"brave-browser", NULL, NULL, 1 << 8, 0, 0, 0, 0, -1},
     {"qutebrowser", NULL, NULL, 1 << 8, 0, 0, 0, 0, -1},
-    {"firefox", NULL, NULL, 1 << 8, 0, 0, 0, 0, -1},
-    {"youdu", NULL, NULL, 1 << 7, 0, 0, 0, 0, -1},
+    {"firefox-start", NULL, NULL, 1 << 8, 0, 0, 0, 0, -1},
     {"st-256color", NULL, NULL, 0, 0, 0, 1, 0, -1},
     {"St", "st", NULL, 0, 0, 0, 1, 0, -1},
     {NULL, NULL, "Event Tester", 0, 0, 0, 0, 1, -1}, /* xev */
@@ -83,7 +84,7 @@ static const int lockfullscreen =
     1; /* 1 will force focus on the fullscreen window */
 
 #define FORCE_VSPLIT                                                           \
-  1 /* nrowgrid layout: force two clients to always split vertically */
+    1 /* nrowgrid layout: force two clients to always split vertically */
 
 #include "vanitygaps.c"
 
@@ -121,27 +122,27 @@ static const Layout layouts[] = {
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY, TAG)                                                      \
-  {MODKEY, KEY, view, {.ui = 1 << TAG}},                                       \
-      {MODKEY | ControlMask, KEY, toggleview, {.ui = 1 << TAG}},               \
-      {MODKEY | ShiftMask, KEY, tag, {.ui = 1 << TAG}},                        \
-      {MODKEY | ControlMask | ShiftMask, KEY, toggletag, {.ui = 1 << TAG}},
+    {MODKEY, KEY, view, {.ui = 1 << TAG}},                                     \
+        {MODKEY | ControlMask, KEY, toggleview, {.ui = 1 << TAG}},             \
+        {MODKEY | ShiftMask, KEY, tag, {.ui = 1 << TAG}},                      \
+        {MODKEY | ControlMask | ShiftMask, KEY, toggletag, {.ui = 1 << TAG}},
 
 #define STACKKEYS(MOD, ACTION)                                                 \
-  {MOD, XK_j, ACTION##stack, {.i = INC(+1)}},                                  \
-      {MOD, XK_k, ACTION##stack, {.i = INC(-1)}},                              \
-      {MOD,                                                                    \
-       XK_v,                                                                   \
-       ACTION##stack,                                                          \
-       {.i = 0}}, /* {MOD, XK_grave, ACTION##stack, {.i = PREVSEL}}, \ */
+    {MOD, XK_j, ACTION##stack, {.i = INC(+1)}},                                \
+        {MOD, XK_k, ACTION##stack, {.i = INC(-1)}},                            \
+        {MOD,                                                                  \
+         XK_v,                                                                 \
+         ACTION##stack,                                                        \
+         {.i = 0}}, /* {MOD, XK_grave, ACTION##stack, {.i = PREVSEL}}, \ */
 /* {MOD, XK_a, ACTION##stack, {.i = 1}},                                    \ */
 /* {MOD, XK_z, ACTION##stack, {.i = 2}},                                    \ */
 /* {MOD, XK_x, ACTION##stack, {.i = -1}}, */
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd)                                                             \
-  {                                                                            \
-    .v = (const char *[]) { "/bin/sh", "-c", cmd, NULL }                       \
-  }
+    {                                                                          \
+        .v = (const char *[]) { "/bin/sh", "-c", cmd, NULL }                   \
+    }
 
 #define STATUSBAR "dwmblocks"
 
@@ -150,7 +151,7 @@ static char dmenumon[2] =
     "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = {"dmenu_run", "-m",  dmenumon,       "-fn",
                                  dmenufont,   "-nb", normbgcolor,    "-nf",
-                                 normfgcolor, "-sb", selbordercolor, "-sf",
+                                 normfgcolor, "-sb", selbgcolor,     "-sf",
                                  selfgcolor,  NULL};
 
 static const char *termcmd[] = {"st", NULL};
@@ -161,12 +162,14 @@ static const char *termcmd[] = {"st", NULL};
 ResourcePref resources[] = {
     // {"dmenufont", STRING, &dmenufont},
 
-    {"color0", STRING, &normbordercolor},
-    {"color8", STRING, &selbordercolor},
-    {"color0", STRING, &normbgcolor},
-    {"color4", STRING, &normfgcolor},
-    {"color0", STRING, &selbgcolor},
-    {"color4", STRING, &selfgcolor},
+    /* colours from the current theme (`theme` writes dwm.* into X resources);
+       reload live with `dwmc xrdb` */
+    {"normbgcolor", STRING, &normbgcolor},
+    {"normbordercolor", STRING, &normbordercolor},
+    {"normfgcolor", STRING, &normfgcolor},
+    {"selbgcolor", STRING, &selbgcolor},
+    {"selbordercolor", STRING, &selbordercolor},
+    {"selfgcolor", STRING, &selfgcolor},
     //{"alpha", STRING, &defaultopacity},
 
     {"borderpx", INTEGER, &borderpx},
@@ -181,9 +184,9 @@ ResourcePref resources[] = {
 #include <X11/XF86keysym.h>
 
 #define BIND_SET_LAYOUT(I, K)                                                  \
-  {MODKEY, XK_##K, setlayout, {.v = &layouts[I]}}, {                           \
-    MODKEY | ShiftMask, XK_##K, setlayout, { .v = &layouts[I + 1] }            \
-  }
+    {MODKEY, XK_##K, setlayout, {.v = &layouts[I]}}, {                         \
+        MODKEY | ShiftMask, XK_##K, setlayout, { .v = &layouts[I + 1] }        \
+    }
 
 #include "keepfloatingposition.c"
 static Key keys[] = {
@@ -248,21 +251,21 @@ static Key keys[] = {
      SHCMD("pulsemixer --id source-1 --toggle-mute")},
     {0, XF86XK_AudioRaiseVolume, spawn, SHCMD("pulsemixer --change-volume +5")},
     {0, XF86XK_AudioLowerVolume, spawn, SHCMD("pulsemixer --change-volume -5")},
+    {0, XF86XK_AudioPlay, spawn, SHCMD("playerctl play-pause")},
 
     // open apps
-    {MODKEY | ShiftMask, XK_w, spawn, SHCMD("firefox-bin")},
+    {MODKEY | ShiftMask, XK_w, spawn, SHCMD("firefox-start")},
     {MODKEY | ShiftMask, XK_e, spawn, SHCMD("everywhere")},
     {MODKEY | ShiftMask, XK_p, spawn, SHCMD("screenshot")},
-    {MODKEY, XK_f, spawn, SHCMD("setsid st -e lf")},
+    {MODKEY | ShiftMask, XK_f, spawn, SHCMD("setsid st -e lf")},
     // toggle client status
     // float
-    {MODKEY | ShiftMask, XK_f, togglefloating, {0}},
+    {MODKEY, XK_f, togglefloating, {0}},
     // full screen
     {MODKEY, XK_m, togglefullscr, {0}},
     // sticky
     {MODKEY | ShiftMask, XK_s, togglesticky, {0}},
 };
-
 
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,

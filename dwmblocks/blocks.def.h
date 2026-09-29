@@ -13,10 +13,13 @@ static const Block blocks[] = {
     {"", "input_method", 1, 2},
 
     // memory
-    {"💾 ", "show_resource", 10, 3},
+    {"", "show_resource", 10, 3},  /* icon printed by the script */
 
     // battery
     {"", "battery", 6, 4},
+
+    // bazi (four pillars), refresh every minute
+    {"", "show_bazi", 60, 6},
 
     // date
     {"", "d=$(date '+%b %d (%a) %I:%M%p'); echo $d", 120, 0},
