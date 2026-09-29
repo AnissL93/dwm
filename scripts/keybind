@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-xmodmap ~/.config/X11/xmodmap
