@@ -1,0 +1,7 @@
+# build outputs (config.h is generated from config.def.h)
+*.o
+/dwm
+/config.h
+/dmenu/dmenu
+/dmenu/stest
+/dwmblocks/dwmblocks
