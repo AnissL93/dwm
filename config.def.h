@@ -17,11 +17,11 @@ static const int swallowfloating =
 static const int showbar = 1; /* 0 means no bar */
 static const int topbar = 1;  /* 0 means bottom bar */
 // static double defaultopacity = 0.93;
-static const char *fonts[] = {"PxPlus IBM VGA 8x16:pixelsize=24",
+static const char *fonts[] = {"PxPlus IBM VGA 8x16:pixelsize=26.67",
                               "Cubic 11:pixelsize=24",
                               "typicons:pixelsize=22",  /* status bar icons */
                               "Noto Color Emoji:pixelsize=20"};
-static const char dmenufont[] = "PxPlus IBM VGA 8x16:pixelsize=24";
+static const char dmenufont[] = "PxPlus IBM VGA 8x16:pixelsize=26.67";
 
 /* fallback colours (amber); normally overridden by the theme via X resources */
 static char normbgcolor[] = "#140c00";

@@ -4,7 +4,7 @@
 static int topbar = 1;                      /* -b  option; if 0, dmenu appears at bottom     */
 
 /* -fn option overrides fonts[0]; default X11 font or font set */
-static char font[] = "PxPlus IBM VGA 8x16:pixelsize=24";
+static char font[] = "PxPlus IBM VGA 8x16:pixelsize=26.67";
 static const char *fonts[] = {
 	font,
 	"Cubic 11:pixelsize=24",
