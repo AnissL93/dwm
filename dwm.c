@@ -2373,8 +2373,7 @@ int updategeom(void) {
       if (isuniquegeom(unique, j, &info[i]))
         memcpy(&unique[j++], &info[i], sizeof(XineramaScreenInfo));
     XFree(info);
-    nn = 2; unique = realloc(unique, 2*sizeof *unique);
-    unique[0]=(XineramaScreenInfo){0,0,0,1280,800}; unique[1]=(XineramaScreenInfo){1,1280,0,1280,800};
+    nn = j;
     if (n <= nn) { /* new monitors available */
       for (i = 0; i < (nn - n); i++) {
         for (m = mons; m && m->next; m = m->next)
