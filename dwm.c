@@ -535,7 +535,7 @@ void attachclients(Monitor *m) {
   /* collect information about the tags in use */
   for (tm = mons; tm; tm = tm->next)
     if (tm != m)
-      utags |= m->tagset[m->seltags];
+      utags |= tm->tagset[tm->seltags];
 
   for (c = m->cl->clients; c; c = c->next)
     if (ISVISIBLE(c, m)) {
@@ -1122,14 +1122,15 @@ void focusstack(const Arg *arg) {
 
 Atom getatomprop(Client *c, Atom prop) {
   int di;
-  unsigned long dl;
+  unsigned long nitems, dl;
   unsigned char *p = NULL;
   Atom da, atom = None;
 
   if (XGetWindowProperty(dpy, c->win, prop, 0L, sizeof atom, False, XA_ATOM,
-                         &da, &di, &dl, &dl, &p) == Success &&
+                         &da, &di, &nitems, &dl, &p) == Success &&
       p) {
-    atom = *(Atom *)p;
+    if (nitems > 0)
+      atom = *(Atom *)p;
     XFree(p);
   }
   return atom;
@@ -1978,6 +1979,11 @@ void showhide(Client *c) {
     return;
   if (ISVISIBLE(c, c->mon)) {
     /* show clients top down */
+    /* fullscreen client may have changed monitor (single_tagset swap, tagmon) */
+    if (c->isfullscreen &&
+        (c->x != c->mon->mx || c->y != c->mon->my || c->w != c->mon->mw ||
+         c->h != c->mon->mh))
+      resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
     XMoveWindow(dpy, c->win, c->x, c->y);
     if ((!c->mon->lt[c->mon->sellt]->arrange || c->isfloating) &&
         !c->isfullscreen) {
@@ -2367,7 +2373,8 @@ int updategeom(void) {
       if (isuniquegeom(unique, j, &info[i]))
         memcpy(&unique[j++], &info[i], sizeof(XineramaScreenInfo));
     XFree(info);
-    nn = j;
+    nn = 2; unique = realloc(unique, 2*sizeof *unique);
+    unique[0]=(XineramaScreenInfo){0,0,0,1280,800}; unique[1]=(XineramaScreenInfo){1,1280,0,1280,800};
     if (n <= nn) { /* new monitors available */
       for (i = 0; i < (nn - n); i++) {
         for (m = mons; m && m->next; m = m->next)
