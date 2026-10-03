@@ -242,6 +242,7 @@ static void detach(Client *c);
 static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
 static void drawbar(Monitor *m);
+static const char *taglabel(Monitor *m, unsigned int i);
 static void drawbars(void);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
@@ -620,7 +621,7 @@ void buttonpress(XEvent *e) {
   if (ev->window == selmon->barwin) {
     i = x = 0;
     do
-      x += TEXTW(tags[i]);
+      x += TEXTW(taglabel(selmon, i));
     while (ev->x >= x && ++i < LENGTH(tags));
     if (i < LENGTH(tags)) {
       click = ClkTagBar;
@@ -932,6 +933,7 @@ void drawbar(Monitor *m) {
   int boxs = drw->fonts->h / 9;
   int boxw = drw->fonts->h / 6 + 2;
   unsigned int i, occ = 0, urg = 0;
+  const char *label;
   Client *c;
 
   if (!m->showbar)
@@ -966,10 +968,11 @@ void drawbar(Monitor *m) {
   }
   x = 0;
   for (i = 0; i < LENGTH(tags); i++) {
-    w = TEXTW(tags[i]);
+    label = taglabel(m, i);
+    w = TEXTW(label);
     drw_setscheme(
         drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-    drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+    drw_text(drw, x, 0, w, bh, lrpad / 2, label, urg & 1 << i);
     if (occ & 1 << i)
       drw_rect(drw, x + boxs, boxs, boxw, boxw,
                m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
@@ -992,6 +995,37 @@ void drawbar(Monitor *m) {
     }
   }
   drw_map(drw, m->barwin, 0, 0, m->ww, bh);
+}
+
+/* tag name followed by one icon per distinct app on that tag */
+const char *taglabel(Monitor *m, unsigned int i) {
+  static char buf[256];
+  size_t n, base;
+  unsigned int j;
+  const char *icon;
+  XClassHint ch;
+  Client *c;
+
+  base = n = snprintf(buf, sizeof buf, "%s", tags[i]);
+  for (c = m->cl->clients; c; c = c->next) {
+    if (!(c->tags & 1 << i))
+      continue;
+    icon = defaulticon;
+    ch.res_class = ch.res_name = NULL;
+    XGetClassHint(dpy, c->win, &ch);
+    for (j = 0; ch.res_class && j < LENGTH(tagicons); j++)
+      if (!strcmp(ch.res_class, tagicons[j][0])) {
+        icon = tagicons[j][1];
+        break;
+      }
+    if (ch.res_class)
+      XFree(ch.res_class);
+    if (ch.res_name)
+      XFree(ch.res_name);
+    if (!strstr(buf + base, icon) && n < sizeof buf)
+      n += snprintf(buf + n, sizeof buf - n, " %s", icon);
+  }
+  return buf;
 }
 
 void drawbars(void) {

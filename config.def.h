@@ -20,6 +20,7 @@ static const int topbar = 1;  /* 0 means bottom bar */
 static const char *fonts[] = {"PxPlus IBM VGA 8x16:pixelsize=26.67",
                               "Cubic 11:pixelsize=24",
                               "typicons:pixelsize=22",  /* status bar icons */
+                              "Symbols Nerd Font Mono:pixelsize=22", /* tag icons */
                               "Noto Color Emoji:pixelsize=20"};
 static const char dmenufont[] = "PxPlus IBM VGA 8x16:pixelsize=26.67";
 
@@ -47,7 +48,26 @@ const unsigned int alphas[][3] = {
 };
 
 /* tagging */
-static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "📹", "🌐"};
+/* nf-md-numeric_N_circle (Symbols Nerd Font); _circle_outline is the codepoint after each */
+static const char *tags[] = {"\U000F0CA0", "\U000F0CA2", "\U000F0CA4", "\U000F0CA6", "\U000F0CA8",
+                             "\U000F0CAA", "\U000F0CAC", "\U000F0CAE", "\U000F0CB0"};
+
+/* icon shown next to a tag for each client on it; matched exactly against
+ * WM_CLASS class (xprop WM_CLASS, second string) */
+static const char *tagicons[][2] = {
+    {"firefox", "\U000F0239"}, /* nf-md-firefox */
+    {"Brave-browser", "\U0000F0AC"}, /* nf-fa-globe */
+    {"qutebrowser", "\U0000F0AC"}, /* nf-fa-globe */
+    {"St", "\U0000E795"}, /* nf-dev-terminal */
+    {"st-256color", "\U0000E795"}, /* nf-dev-terminal */
+    {"Alacritty", "\U0000E795"}, /* nf-dev-terminal */
+    {"Emacs", "\U0000E632"}, /* nf-custom-emacs */
+    {"Code", "\U000F0A1E"}, /* nf-md-vscode */
+    {"obsidian", "\U000F082E"}, /* nf-md-notebook */
+    {"Zathura", "\U0000F1C1"}, /* nf-fa-file_pdf */
+    {"mpv", "\U0000F03D"}, /* nf-fa-video */
+};
+static const char *defaulticon = "\U0000F2D0"; /* nf-fa-window_maximize */
 
 /**
   const char *class;
